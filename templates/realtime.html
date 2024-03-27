@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yay, sockets are fun</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    
+    <h1>Mijn eerste ervaring met websockets</h1>
+    <p>Het is nu <span id="temperature"></span> °C</p>
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" class="form-control" id="message" placeholder="Type a message">
+            <div class="input-group-append">
+                <button class="btn btn-primary" id="send">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    <script>
+        const socket = io('http://localhost:6060');
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('response', (data) => {
+            console.log('response from server', data);
+        });
+
+        // listen to temperature changes
+        socket.on('temperature', (temperature) => {
+            console.log('temperature', temperature.value);
+            document.getElementById('temperature').innerText = temperature.value;
+        });
+
+        document.getElementById('send').addEventListener('click', () => {
+            const message = document.getElementById('message').value;
+            socket.emit('message', message);
+        });
+
+    </script>
+</body>
+</html>
